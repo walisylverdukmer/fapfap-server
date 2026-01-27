@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion du Club - Fap Fap 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { 
+            --pro-gold: #d4af37; 
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --bg-dark: #0a0a0a;
+            --card-bg: #161616;
+        }
+        
+        body { background-color: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; }
+
+        /* NAVBAR RÉTABLIE */
+        .navbar-pro {
+            background: #111;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222;
+        }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; }
+        
+        .nav-links {
+            background: #111;
+            display: flex;
+            padding: 0 30px;
+            gap: 20px;
+            border-bottom: 1px solid #222;
+        }
+        .nav-link {
+            padding: 15px 0;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-bottom: 2px solid transparent;
+            transition: 0.3s;
+        }
+        .nav-link.active { color: var(--pro-gold); border-bottom-color: var(--pro-gold); }
+
+        .container-main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* BANDEAU CAISSE */
+        .caisse-banner {
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333;
+            border-left: 5px solid #27ae60;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .caisse-info h3 { margin: 0; font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .caisse-amount { font-size: 2.2rem; font-weight: 800; color: #fff; margin-top: 5px; }
+        .caisse-currency { font-size: 1rem; color: #27ae60; margin-left: 5px; }
+
+        #btn-collect {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        #btn-collect:hover:not(:disabled) {
+            background: #2ecc71;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+        }
+
+        #btn-collect:disabled {
+            background: #444;
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+
+        /* GRILLE DE GESTION */
+        .manage-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 25px;
+        }
+
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid #222; height: fit-content; }
+
+        /* LISTE JOUEURS */
+        #playerListContainer { max-height: 600px; overflow-y: auto; padding-right: 5px; }
+        
+        /* Personnalisation Scrollbar */
+        #playerListContainer::-webkit-scrollbar { width: 5px; }
+        #playerListContainer::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        /* FORMULAIRE */
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        input:focus { border-color: var(--pro-gold); outline: none; }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--pro-gold);
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+    <header class="navbar-pro">
+        <div class="logo">♠️ FAP <span style="color:var(--pro-gold)">CLUB</span></div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span id="userDisplay" style="color: #aaa; font-size: 0.9rem;">Chargement...</span>
+            <button onclick="logout()" style="background: #c62828; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:0.8rem;">DECONNEXION</button>
+        </div>
+    </header>
+
+    <nav class="nav-links">
+        <a href="dashboard-pro.html" id="link-admin" class="nav-link" style="display:none;">📊 TABLEAU DE BORD</a>
+        <a href="dashboard.html" class="nav-link">🎮 SALLES DE JEU</a>
+        <a href="club-manage.html" class="nav-link active">📂 GESTION JOUEURS</a>
+    </nav>
+
+    <div class="container-main">
+
+        <section class="caisse-banner">
+            <div class="caisse-info">
+                <h3>💰 Ma Caisse Katika (Commissions 5%)</h3>
+                <div class="caisse-amount">
+                    <span id="caisse-amount">0</span><span class="caisse-currency">FCFA</span>
+                </div>
+            </div>
+            <button id="btn-collect" onclick="collectCaisse()" disabled title="Vous pourrez récolter dès que la caisse est > 0">
+                💸 RÉCOLTER LES GAINS
+            </button>
+        </section>
+
+        <div class="manage-grid">
+            <section class="card">
+                <h3 style="color: var(--pro-gold); margin-top:0;">🆕 RECRUTER UN JOUEUR</h3>
+                <p style="font-size: 0.8rem; color: #666; margin-bottom: 25px;">Ajoutez un membre à votre club VIP.</p>
+                
+                <form id="addPlayerForm">
+                    <div class="form-group">
+                        <label>Identifiant Joueur (Pseudo)</label>
+                        <input type="text" id="p_username" placeholder="Pseudo unique" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Numéro de Téléphone</label>
+                        <input type="text" id="p_phone" placeholder="Ex: 6xx xxx xxx" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mot de passe (PIN)</label>
+                        <input type="password" id="p_password" placeholder="Code secret joueur" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Dotation de départ (FCFA)</label>
+                        <input type="number" id="p_wallet" value="2000" step="500">
+                    </div>
+                    <button type="submit" class="btn-submit">VALIDER L'INSCRIPTION</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3 style="color: var(--pro-gold); margin-top:0;">👥 RÉSEAU DES JOUEURS</h3>
+                <p style="font-size: 0.8rem; color: #666;">Gérez les comptes et effectuez des dotations.</p>
+                <div id="playerListContainer" style="margin-top: 20px;">
+                    <div style="text-align: center; color: #444; padding: 40px;">Initialisation de la liste...</div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="club-manage.js"></script>
+</body>
+</html>

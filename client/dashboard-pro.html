@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fap Fap Pro - Administration Wali Sylver</title>
+    <style>
+        :root {
+            --pro-gold: #d4af37;
+            --pro-bg: #0a0a0a;
+            --card-dark: #161616;
+            --red-exit: #c62828;
+        }
+
+        body {
+            background: var(--pro-bg);
+            color: white;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* NAVBAR PRO */
+        .navbar-pro {
+            background: #000;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--pro-gold);
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .logo { font-weight: bold; font-size: 1.2rem; letter-spacing: 1px; }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            background: #111;
+            padding: 12px 25px;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+        }
+
+        .nav-link {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 10px 18px;
+            border-radius: 5px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-link:hover { background: #222; color: var(--pro-gold); }
+        .nav-link.active {
+            color: var(--pro-gold);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--pro-gold);
+        }
+
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: radial-gradient(circle at top right, #111, #0a0a0a);
+        }
+
+        /* GRILLE DE STATS */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: var(--card-dark);
+            border-left: 4px solid var(--pro-gold);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .stat-card p { margin: 0; color: #888; font-size: 0.9rem; text-transform: uppercase; }
+
+        .stat-val {
+            font-size: 2rem;
+            color: var(--pro-gold);
+            font-weight: 800;
+            margin-top: 12px;
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .admin-main {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-dark);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #222;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: #000;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        input:focus { border-color: var(--pro-gold); outline: none; }
+
+        button.btn-gold {
+            width: 100%;
+            background: linear-gradient(135deg, var(--pro-gold), #b8860b);
+            color: black;
+            font-weight: 800;
+            padding: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        button.btn-gold:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
+
+        /* TABLEAU */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th {
+            color: #555;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            padding: 15px;
+            border-bottom: 2px solid #222;
+            text-align: left;
+        }
+        td { padding: 18px 15px; border-bottom: 1px solid #1f1f1f; }
+
+        .badge-katika {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar-pro">
+        <div class="logo">♠️ FAP FAP <span style="color:var(--pro-gold)">PRO</span></div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span id="adminDisplay" style="color: #aaa; font-size: 0.9rem;">Chargement...</span>
+            <button onclick="logout()" style="background: var(--red-exit); color:white; border:none; padding:10px 18px; border-radius:6px; cursor:pointer; font-weight: bold; font-size: 0.8rem;">DECONNEXION</button>
+        </div>
+    </header>
+
+    <nav class="nav-links">
+        <a href="dashboard-pro.html" class="nav-link active">📊 TABLEAU DE BORD</a>
+        <a href="dashboard.html" class="nav-link">🎮 VUE JOUEUR (SALLES)</a>
+        <a href="club-manage.html" class="nav-link">📂 GESTION CLUBS</a>
+        <a href="#" class="nav-link">💰 FLUX FINANCIERS</a>
+    </nav>
+
+    <div class="content-scroll">
+        <div style="max-width: 1400px; margin: auto;">
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <p>Volume Total Mises</p>
+                    <div class="stat-val" id="statVolume">0 FCFA</div>
+                </div>
+                <div class="stat-card">
+                    <p>Clubs Partenaires</p>
+                    <div class="stat-val" id="statClubs">0</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #4caf50;">
+                    <p>Total Caisse Réseau</p>
+                    <div class="stat-val" id="statComms" style="color: #4caf50;">0 FCFA</div>
+                </div>
+            </div>
+
+            <div class="admin-main">
+                <section class="card">
+                    <h3 style="color: var(--pro-gold); margin: 0 0 10px 0;">🎖️ RECRUTER UN KATIKA</h3>
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 25px;">Affectez un gestionnaire à un nouveau club VIP.</p>
+                    
+                    <form id="addKatikaFormPro">
+                        <label style="font-size: 0.75rem; color: var(--pro-gold);">IDENTITÉ DU GESTIONNAIRE</label>
+                        <input type="text" id="k_name" placeholder="Nom complet" required>
+                        
+                        <label style="font-size: 0.75rem; color: var(--pro-gold);">NUMÉRO DE COMPTE (TÉL)</label>
+                        <input type="text" id="k_phone" placeholder="Ex: 07000000" required>
+                        
+                        <label style="font-size: 0.75rem; color: var(--pro-gold);">MOT DE PASSE PROVISOIRE</label>
+                        <input type="password" id="k_pass" placeholder="••••••••" required>
+                        
+                        <label style="font-size: 0.75rem; color: var(--pro-gold);">NOM DU CLUB À CRÉER</label>
+                        <input type="text" id="k_club" placeholder="Ex: Grand Palace" required>
+                        
+                        <button type="submit" class="btn-gold">ACTIVER LE RECRUTEMENT</button>
+                    </form>
+                </section>
+
+                <section class="card">
+                    <h3 style="color: var(--pro-gold); margin: 0 0 20px 0;">📂 RÉSEAU DES GESTIONNAIRES</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Katika / Contact</th>
+                                <th>Club Affilié</th>
+                                <th>Soldes (Perso / Club)</th>
+                                <th>État</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="katikaTableBody">
+                            </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard-pro.js"></script>
+</body>
+</html>
