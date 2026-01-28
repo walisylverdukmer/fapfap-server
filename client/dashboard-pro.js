@@ -22,7 +22,7 @@ async function initAdmin() {
 // --- 0. CHARGER LES STATISTIQUES GLOBALES (Mises et Commissions) ---
 async function loadStats() {
     try {
-        const response = await fetch('http://localhost:5000/api/money/admin-stats', {
+        const response = await fetch('https://fap-fap-api.onrender.com/api/money/admin-stats', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const stats = await response.json();
@@ -50,7 +50,7 @@ document.getElementById('addKatikaFormPro').addEventListener('submit', async (e)
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/auth/register-katika', {
+        const response = await fetch('https://fap-fap-api.onrender.com/api/auth/register-katika', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ async function loadKatikaList() {
     const tableBody = document.getElementById('katikaTableBody');
     
     try {
-        const response = await fetch('http://localhost:5000/api/money/all-katikas', {
+        const response = await fetch('https://fap-fap-api.onrender.com/api/money/all-katikas', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -148,7 +148,7 @@ function rechargeKatika(id, name) {
 // Appel API pour le transfert SuperAdmin -> Katika
 async function transferToKatika(id, amount) {
     try {
-        const response = await fetch('http://localhost:5000/api/money/transfer-admin', {
+        const response = await fetch('https://fap-fap-api.onrender.com/api/money/transfer-admin', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ async function toggleClubStatus(clubId, currentStatus) {
     if (!confirm(confirmMsg)) return;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/money/toggle-club/${clubId}`, {
+        const response = await fetch(`https://fap-fap-api.onrender.com/api/money/toggle-club/${clubId}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
 // club-manage.js - Gestion Katika & Caisse
 const user = JSON.parse(localStorage.getItem('user'));
 const token = localStorage.getItem('token');
-const API_BASE = 'http://localhost:5000'; 
+const API_BASE = 'https://fap-fap-api.onrender.com'; 
 
 // Sécurité : Redirection si non connecté ou rôle inapproprié
 if (!user || (user.role !== 'katika' && user.role !== 'superadmin')) {

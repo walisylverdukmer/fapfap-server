@@ -1,4 +1,4 @@
-const socket = io('http://localhost:5000');
+const socket = io('https://fap-fap-api.onrender.com');
 
 // --- INITIALISATION UTILISATEUR ---
 const user = JSON.parse(localStorage.getItem('user')) || { 
