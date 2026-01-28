@@ -13,15 +13,11 @@ const app = express();
 
 // Configuration CORS complète pour le Cloud
 app.use(cors({
-    origin: ["https://fap-fap-game.onrender.com", "http://localhost:5000"],
+    origin: "*", // Autorise TOUTES les sources temporairement pour débloquer le jeu
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    credentials: true
 }));
-
-app.options('*', cors());
 
 app.use(express.json());
 
