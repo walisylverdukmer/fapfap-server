@@ -11,6 +11,26 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+}));
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.json({ 
+        status: "success", 
+        message: "Serveur Fap Fap 2026 opérationnel" 
+    });
+});
+
+app.use('/api/money', moneyRoutes);
+app.use('/api/auth', authRoutes);
+
+
+
 // Configuration CORS complète pour le Cloud
 app.use(cors({
     origin: "*", // Autorise TOUTES les sources temporairement pour débloquer le jeu
