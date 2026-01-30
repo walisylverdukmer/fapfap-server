@@ -7,18 +7,15 @@ exports.registerKatika = async (req, res) => {
     try {
         const { username, phone, password, clubName } = req.body;
 
-        // Validation des champs
         if (!username || !phone || !password || !clubName) {
             return res.status(400).json({ msg: "Veuillez remplir tous les champs (Nom, Tel, Pass, Club)." });
         }
 
-        // Vérification doublon téléphone
         const [existing] = await db.query("SELECT id FROM users WHERE phone = ?", [phone]);
         if (existing.length > 0) {
             return res.status(400).json({ msg: "Ce numéro de téléphone est déjà utilisé." });
         }
 
-        // Hachage du mot de passe
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -30,19 +27,18 @@ exports.registerKatika = async (req, res) => {
             [username, phone, hashedPassword]
         );
         const katikaId = userResult.insertId;
-        console.log(`Utilisateur créé avec l'ID: ${katikaId}`);
 
-        // ÉTAPE B : Création du Club (Utilise la colonne katika_id que tu viens d'ajouter)
+        // ÉTAPE B : Création du Club
         const [clubResult] = await db.query(
             "INSERT INTO clubs (name, katika_id) VALUES (?, ?)",
             [clubName, katikaId]
         );
         const clubId = clubResult.insertId;
-        console.log(`Club "${clubName}" créé avec l'ID: ${clubId}`);
 
-        // ÉTAPE C : Liaison finale (Mise à jour du club_id dans la table users)
+        // ÉTAPE C : Liaison finale
         await db.query("UPDATE users SET club_id = ? WHERE id = ?", [clubId, katikaId]);
-        console.log("Liaison User <-> Club terminée.");
+        
+        console.log(`Katika et Club "${clubName}" créés avec succès.`);
 
         res.status(201).json({ 
             msg: `Succès : Katika ${username} recruté et Club "${clubName}" créé !`,
@@ -59,26 +55,28 @@ exports.registerKatika = async (req, res) => {
     }
 };
 
-// --- 2. CRÉATION JOUEUR (Action du Katika ou de Wali) ---
+// --- 2. CRÉATION JOUEUR (Action libre ou via Katika) ---
 exports.registerPlayer = async (req, res) => {
     try {
         const { username, phone, password, wallet, club_id } = req.body;
 
-        if (!username || !phone || !password || !club_id) {
-            return res.status(400).json({ msg: "Données incomplètes pour le joueur." });
+        // Note: club_id est ici optionnel pour permettre aux joueurs d'être "libres"
+        if (!username || !phone || !password) {
+            return res.status(400).json({ msg: "Données incomplètes (Nom, Tel, Pass requis)." });
         }
 
         const [existing] = await db.query("SELECT id FROM users WHERE phone = ?", [phone]);
         if (existing.length > 0) {
-            return res.status(400).json({ msg: "Ce numéro est déjà utilisé par un joueur." });
+            return res.status(400).json({ msg: "Ce numéro est déjà utilisé." });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // On insère le joueur. Si club_id n'est pas fourni, il sera NULL par défaut en BD
         await db.query(
             "INSERT INTO users (username, phone, password, role, wallet, club_id) VALUES (?, ?, ?, 'player', ?, ?)",
-            [username, phone, hashedPassword, wallet || 0, club_id]
+            [username, phone, hashedPassword, wallet || 0, club_id || null]
         );
 
         res.status(201).json({ msg: `Joueur ${username} enregistré avec succès !` });
@@ -111,7 +109,6 @@ exports.login = async (req, res) => {
             return res.status(400).json({ msg: "Identifiants incorrects." });
         }
 
-        // Génération du Token avec les infos essentielles
         const token = jwt.sign(
             { id: user.id, role: user.role, club_id: user.club_id },
             process.env.JWT_SECRET || 'votre_secret_fap_fap_2026',
@@ -133,5 +130,20 @@ exports.login = async (req, res) => {
     } catch (error) {
         console.error("ERREUR LOGIN:", error);
         res.status(500).json({ error: "Erreur serveur lors de la connexion." });
+    }
+};
+
+// --- 4. RÉCUPÉRER TOUS LES JOUEURS (Lobby Global) ---
+exports.getAllPlayers = async (req, res) => {
+    try {
+        // Cette requête permet à tout le monde de voir tous les joueurs
+        // Idéal pour ton salon commun
+        const [players] = await db.query(
+            "SELECT id, username, phone, wallet, role, club_id FROM users WHERE role = 'player'"
+        );
+        res.json(players);
+    } catch (error) {
+        console.error("ERREUR RÉCUPÉRATION JOUEURS:", error);
+        res.status(500).json({ error: "Impossible de charger la liste des joueurs." });
     }
 };

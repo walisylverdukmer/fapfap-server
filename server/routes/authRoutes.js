@@ -16,9 +16,15 @@ router.post('/register-katika', authController.registerKatika);
 
 /**
  * @route   POST /api/auth/register-player
- * @desc    Action du Katika ou de Wali : Inscrire un joueur dans un club existant
- * C'est cette route qui débloque ton formulaire dans club-manage.html
+ * @desc    Action du Katika ou de Wali : Inscrire un joueur
  */
 router.post('/register-player', authController.registerPlayer);
+
+/**
+ * @route   GET /api/auth/players
+ * @desc    Récupérer la liste de TOUS les joueurs (Lobby Global)
+ * Utile pour que les joueurs se voient entre eux dès la connexion
+ */
+router.get('/players', authController.getAllPlayers);
 
 module.exports = router;
